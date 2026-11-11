@@ -1,0 +1,7 @@
+transaction_id,status,amount,date,error_code,recipient,category,payment_mode
+TXN1001,Success,500.00,2026-11-01,None,Rahul Sharma,UPI Transfer,State Bank of India
+TXN1002,Failed,1250.50,2026-11-05,ERR_INSUFFICIENT_FUNDS,Amazon India,Merchant Payment,HDFC Bank
+TXN1003,Pending,300.00,2026-11-08,ERR_BANK_TIMEOUT,Jio Mobile Recharge,Recharge,ICICI Bank
+TXN1004,Success,2499.00,2026-11-09,None,BESCOM Electricity,Bill Payment,PhonePe Wallet
+TXN1005,Refunded,750.00,2026-11-10,ERR_UPI_TIMEOUT,Swiggy,Merchant Payment,Axis Bank
+TXN1006,Success,150.00,2026-11-11,None,Priya Singh,UPI Transfer,State Bank of India

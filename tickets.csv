@@ -1,0 +1,3 @@
+ticket_id,transaction_id,issue_type,status,created_at,description
+TKT9001,TXN1002,Money Debited but Failed,Open,2026-11-05 14:32,Amount debited from HDFC account but payment failed at Amazon.
+TKT9002,TXN1003,Pending Transaction,In Progress,2026-11-08 09:15,Recharge pending for more than 24 hours.

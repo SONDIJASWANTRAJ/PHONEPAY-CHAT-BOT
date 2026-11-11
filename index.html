@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhonePe Support Chatbot</title>
+    <style>
+        :root {
+            --primary: #5f259f;
+            --primary-dark: #471b77;
+            --accent: #ffb703;
+            --bg-light: #f4f6f9;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .chat-container {
+            width: 450px;
+            height: 650px;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(95, 37, 159, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(95, 37, 159, 0.1);
+        }
+
+        .chat-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-badge {
+            background: var(--white);
+            color: var(--primary);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-text h3 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .header-text span {
+            font-size: 12px;
+            opacity: 0.85;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .quick-chips {
+            display: flex;
+            gap: 6px;
+            padding: 10px 15px;
+            background: #faf8fc;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            scrollbar-width: thin;
+        }
+
+        .quick-chips::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .quick-chips::-webkit-scrollbar-thumb {
+            background: #d8cde6;
+            border-radius: 2px;
+        }
+
+        .chip {
+            background: var(--white);
+            color: var(--primary);
+            border: 1px solid #d8cde6;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .chip:hover {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background: #fcfbfe;
+        }
+
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 82%;
+        }
+
+        .user-wrapper {
+            align-self: flex-end;
+        }
+
+        .bot-wrapper {
+            align-self: flex-start;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 14px;
+            line-height: 1.5;
+            font-size: 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .user-message {
+            background: var(--primary);
+            color: var(--white);
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-top: 4px;
+            padding: 0 4px;
+        }
+
+        .user-wrapper .message-time {
+            text-align: right;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 14px;
+            border-bottom-left-radius: 4px;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            background: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 12px 15px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            background: #f8f9fa;
+        }
+
+        .chat-input-area input:focus {
+            border-color: var(--primary);
+            background: var(--white);
+        }
+
+        .chat-input-area button {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            box-shadow: 0 2px 5px rgba(95, 37, 159, 0.3);
+        }
+
+        .chat-input-area button:hover {
+            background: var(--primary-dark);
+        }
+
+        .chat-input-area button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-title">
+                <div class="logo-badge">Pe</div>
+                <div class="header-text">
+                    <h3>PhonePe Support</h3>
+                    <span><span class="status-dot"></span> Online Assistant</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Chips -->
+        <div class="quick-chips">
+            <button class="chip" onclick="sendChip('📋 Recent Transactions')">📋 Recent Transactions</button>
+            <button class="chip" onclick="sendChip('🔍 Check status TXN1002')">🔍 Check TXN1002</button>
+            <button class="chip" onclick="sendChip('❌ Money debited but failed')">❌ Failed Payment</button>
+            <button class="chip" onclick="sendChip('🔑 Reset UPI PIN')">🔑 Reset UPI PIN</button>
+            <button class="chip" onclick="sendChip('🎫 My Support Tickets')">🎫 My Tickets</button>
+            <button class="chip" onclick="sendChip('🛡️ Report Fraud')">🛡️ Report Fraud</button>
+        </div>
+
+        <!-- Chat Messages Box -->
+        <div class="chat-box" id="chatBox">
+            <div class="message-wrapper bot-wrapper">
+                <div class="message bot-message">
+                    👋 Hello! I am your PhonePe Support AI. How can I help you troubleshoot a transaction or payment issue today?
+                </div>
+                <div class="message-time" id="initTime"></div>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Ask about transactions, PIN, refunds..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()" title="Send">
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Set initial message timestamp
+        document.getElementById('initTime').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        function sendChip(text) {
+            document.getElementById('userInput').value = text;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Append User Message
+            chatBox.innerHTML += `
+                <div class="message-wrapper user-wrapper">
+                    <div class="message user-message">${escapeHtml(text)}</div>
+                    <div class="message-time">${timeStr}</div>
+                </div>
+            `;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Show Typing Indicator
+            typingIndicator.style.display = 'flex';
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // Send to Flask Backend
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await response.json();
+
+                // Hide Typing Indicator
+                typingIndicator.style.display = 'none';
+
+                const botTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                // Append Bot Response (HTML supported for rich cards)
+                chatBox.innerHTML += `
+                    <div class="message-wrapper bot-wrapper">
+                        <div class="message bot-message">${data.response}</div>
+                        <div class="message-time">${botTimeStr}</div>
+                    </div>
+                `;
+            } catch (err) {
+                typingIndicator.style.display = 'none';
+                chatBox.innerHTML += `
+                    <div class="message-wrapper bot-wrapper">
+                        <div class="message bot-message" style="color: red;">❌ Connection error. Please ensure Flask server is running.</div>
+                        <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                `;
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+    </script>
+</body>
+</html>
